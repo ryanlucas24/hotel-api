@@ -5,12 +5,10 @@ import lombok.Getter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Service
 @Getter
 public class RoomRepository {
 
@@ -70,7 +68,7 @@ public class RoomRepository {
 
     public Optional<Room> readOneRoom(int roomNumber){
         return readAllRooms().stream()
-                .filter(r -> r.getRoomNumber().equals(roomNumber))
+                .filter(r -> r.getRoomNumber() == roomNumber)
                 .findAny();
     }
 

@@ -12,7 +12,7 @@ import java.util.Objects;
 @Setter
 @AllArgsConstructor
 public class Room {
-    private Integer roomNumber;
+    private int roomNumber;
     private String type;
     private Integer price;
     private Boolean available;

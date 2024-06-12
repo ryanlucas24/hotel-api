@@ -63,7 +63,7 @@ public class ServiceUnitTest {
 
     @Test
     public void updateRoom_InvalidRoom_SuccessfulThrowException(){
-        newRoom.setRoomNumber(null);
+        newRoom.setRoomNumber(0);
         newRoom.setPrice(0);
         Assertions.assertThrows(
                 RoomNotValidException.class,

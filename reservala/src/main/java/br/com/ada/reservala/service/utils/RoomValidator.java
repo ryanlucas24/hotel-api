@@ -30,10 +30,6 @@ public class RoomValidator implements Validator<Room> {
     }
 
     private Notification hasNullAttributes(Room room, Notification notification) {
-        if (room.getRoomNumber() == null)
-            notification.addError("Room number is null!");
-        if (room.getPrice() == null)
-            notification.addError("Room price is null!");
         if (room.getType() == null)
             notification.addError("Room type is null!");
         if (room.getAvailable() == null)
