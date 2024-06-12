@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Service
@@ -20,7 +21,7 @@ public class RoomRepository {
     private final String updateSQL = "update room set type = ?, price = ?, available = ? where roomNumber = ?";
     private final String deleteSQL = "delete from room where roomNumber = ?";
     private final String deleteAllSQL = "delete from room";
-    private final String selectRevenueSQL = "select * from room where available = false";
+    private final String selectOccupiedSQL = "select * from room where available = false";
 
     public RoomRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -54,7 +55,7 @@ public class RoomRepository {
                 rs.getInt("price"),
                 rs.getBoolean("available")
         ));
-        return jdbcTemplate.query(selectRevenueSQL, rowMapper);
+        return jdbcTemplate.query(selectOccupiedSQL, rowMapper);
     }
 
     public Room updateRoom(Room room) {
@@ -65,6 +66,12 @@ public class RoomRepository {
                 room.getAvailable(),
                 room.getRoomNumber());
         return room;
+    }
+
+    public Optional<Room> readOneRoom(int roomNumber){
+        return readAllRooms().stream()
+                .filter(r -> r.getRoomNumber().equals(roomNumber))
+                .findAny();
     }
 
     public void deleteRoom(Integer roomNumber) {
