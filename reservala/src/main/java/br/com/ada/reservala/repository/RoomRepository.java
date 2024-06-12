@@ -15,7 +15,7 @@ public class RoomRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final String createSQL = "insert into room(roomNumber, type, price, avalaible) values (?, ?, ?, ?)";
+    private final String createSQL = "insert into room(roomNumber, type, price, available) values (?, ?, ?, ?)";
     private final String readSQL = "select * from room";
     private final String updateSQL = "update room set type = ?, price = ?, available = ? where roomNumber = ?";
     private final String deleteSQL = "delete from room where roomNumber = ?";
