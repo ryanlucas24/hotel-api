@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Builder
 @Getter
 @Setter
@@ -14,4 +16,15 @@ public class Room {
     private String type;
     private Integer price;
     private Boolean available;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Room)) return false;
+        Room room = (Room) o;
+        return Objects.equals(getRoomNumber(), room.getRoomNumber())
+                && Objects.equals(getType(), room.getType())
+                && Objects.equals(getPrice(), room.getPrice())
+                && Objects.equals(getAvailable(), room.getAvailable());
+    }
 }
