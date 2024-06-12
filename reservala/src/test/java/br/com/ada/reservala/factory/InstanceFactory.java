@@ -45,7 +45,7 @@ public class InstanceFactory {
     public static Room getNewRoom(){
         return Room.builder()
                 .roomNumber(getPositiveInteger())
-                .type("Quarto de teste")
+                .type("Test Room")
                 .price(getPositiveInteger())
                 .available(random.nextBoolean())
                 .build();
