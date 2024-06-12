@@ -1,27 +1,31 @@
 package br.com.ada.reservala.repository;
 
 import br.com.ada.reservala.domain.Room;
+import lombok.Getter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Service;
-
+import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
-@Service
+@Repository
+@Getter
 public class RoomRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private String createSQL = "insert into room(roomNumber, type, price, avalaible) values (?, ?, ?, ?)";
-    private String readSQL = "select * from room";
-    private String updateSQL = "update room ";
-    private String deleteSQL = "delete from room";
+    private final String createSQL = "insert into room(roomNumber, type, price, available) values (?, ?, ?, ?)";
+    private final String readSQL = "select * from room";
+    private final String updateSQL = "update room set type = ?, price = ?, available = ? where roomNumber = ?";
+    private final String deleteSQL = "delete from room where roomNumber = ?";
+    private final String deleteAllSQL = "delete from room";
+    private final String selectOccupiedSQL = "select * from room where available = false";
 
     public RoomRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Room createRoom(Room room){
+    public Room createRoom(Room room) {
         jdbcTemplate.update(
                 createSQL,
                 room.getRoomNumber(),
@@ -32,23 +36,47 @@ public class RoomRepository {
         return room;
     }
 
-    public List<Room> readRoom(){
+    public List<Room> readAllRooms() {
         RowMapper<Room> rowMapper = ((rs, rowNum) -> new Room(
                 rs.getInt("roomNumber"),
                 rs.getString("type"),
                 rs.getInt("price"),
-                rs.getBoolean("avalaible")
+                rs.getBoolean("available")
         ));
         return jdbcTemplate.query(readSQL, rowMapper);
     }
 
-    public Room updateRoom(Room room){
-        jdbcTemplate.update(updateSQL, room);
+    public List<Room> readOccupiedRooms() {
+        RowMapper<Room> rowMapper = ((rs, rowNum) -> new Room(
+                rs.getInt("roomNumber"),
+                rs.getString("type"),
+                rs.getInt("price"),
+                rs.getBoolean("available")
+        ));
+        return jdbcTemplate.query(selectOccupiedSQL, rowMapper);
+    }
+
+    public Room updateRoom(Room room) {
+        jdbcTemplate.update(
+                updateSQL,
+                room.getType(),
+                room.getPrice(),
+                room.getAvailable(),
+                room.getRoomNumber());
         return room;
     }
 
-    public void deleteRoom(Integer roomNumber){
+    public Optional<Room> readOneRoom(int roomNumber){
+        return readAllRooms().stream()
+                .filter(r -> r.getRoomNumber() == roomNumber)
+                .findAny();
+    }
+
+    public void deleteRoom(Integer roomNumber) {
         jdbcTemplate.update(deleteSQL, roomNumber);
     }
 
+    public void deleteAllRooms(){
+        jdbcTemplate.update(deleteAllSQL);
+    }
 }
