@@ -43,6 +43,14 @@ public class RepositoryUnitTest {
     }
 
     @Test
+    public void readOccupiedRooms_EmptyDatabase_SuccessfulReadTest(){
+        List<Room> roomsExpected = new ArrayList<>();
+        List<Room> roomsResponse = repository.readOccupiedRooms();
+
+        Assertions.assertEquals(roomsExpected, roomsResponse);
+    }
+
+    @Test
     public void updateRoom_ValidRoom_SuccessfulUpdateTest() {
         Room roomResponse = repository.updateRoom(room);
 
