@@ -1,6 +1,7 @@
 package br.com.ada.reservala.factory;
 
 import br.com.ada.reservala.controller.RoomController;
+import br.com.ada.reservala.controller.dto.RoomDto;
 import br.com.ada.reservala.domain.Room;
 import br.com.ada.reservala.repository.RoomRepository;
 import br.com.ada.reservala.service.RoomService;
@@ -44,6 +45,14 @@ public class InstanceFactory {
 
     public static Room getNewRoom(){
         return Room.builder()
+                .roomNumber(getPositiveInteger())
+                .type("Test Room")
+                .price(getPositiveInteger())
+                .available(random.nextBoolean())
+                .build();
+    }
+    public static RoomDto getNewRoomDto(){
+        return RoomDto.builder()
                 .roomNumber(getPositiveInteger())
                 .type("Test Room")
                 .price(getPositiveInteger())
