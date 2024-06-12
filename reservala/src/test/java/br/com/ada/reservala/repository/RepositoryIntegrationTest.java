@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -19,13 +20,13 @@ public class RepositoryIntegrationTest {
 
     @Autowired
     private RoomRepository repository;
-    private final Room firstRoom = Room.builder()
+    private final Room roomEmpty = Room.builder()
             .roomNumber(1)
             .type("Test Room")
             .price(80)
             .available(true)
             .build();
-    private final Room secondRoom =  Room.builder()
+    private final Room roomOccupied =  Room.builder()
             .roomNumber(2)
             .type("Test Room")
             .price(90)
@@ -34,8 +35,8 @@ public class RepositoryIntegrationTest {
 
     @BeforeEach
     public void populateDatabase(){
-        repository.createRoom(firstRoom);
-        repository.createRoom(secondRoom);
+        repository.createRoom(roomEmpty);
+        repository.createRoom(roomOccupied);
     }
     @AfterEach
     public void excludeDatabaseData(){
@@ -54,12 +55,12 @@ public class RepositoryIntegrationTest {
     public void createRoom_ValidExistentRoom_SuccessfulThrowExceptionTest(){
         Assertions.assertThrows(
                 DuplicateKeyException.class,
-                () -> repository.createRoom(firstRoom));
+                () -> repository.createRoom(roomEmpty));
     }
 
     @Test
     public void readRoom_PopulatedDatabase_SuccessfulReadTest(){
-        List<Room> expectedRoomsList = List.of(firstRoom, secondRoom);
+        List<Room> expectedRoomsList = List.of(roomEmpty, roomOccupied);
         List<Room> responseRoomsList = repository.readAllRooms();
 
         Assertions.assertTrue(expectedRoomsList.containsAll(responseRoomsList));
@@ -68,27 +69,35 @@ public class RepositoryIntegrationTest {
     public void readOccupiedRoom_PopulatedDatabase_SuccessfulReadTest(){
         List<Room> responseRoomsList = repository.readOccupiedRooms();
 
-        Assertions.assertFalse(responseRoomsList.contains(firstRoom));
-        Assertions.assertTrue(responseRoomsList.contains(secondRoom));
+        Assertions.assertFalse(responseRoomsList.contains(roomEmpty));
+        Assertions.assertTrue(responseRoomsList.contains(roomOccupied));
     }
+    @Test
+    public void readOneRoom_PopulatedDatabase_SuccessfulReadTest(){
+        Optional<Room> roomResponse = repository.readOneRoom(roomEmpty.getRoomNumber());
+
+        Assertions.assertEquals(roomResponse.get(), roomEmpty);
+    }
+
+
 
     @Test
     public void updateRoom_ValidRoom_SuccessfulUpdateTest(){
-        firstRoom.setType("Updated Room");
-        firstRoom.setPrice(42);
+        roomEmpty.setType("Updated Room");
+        roomEmpty.setPrice(42);
 
-        Room roomResponse = repository.updateRoom(firstRoom);
+        Room roomResponse = repository.updateRoom(roomEmpty);
 
-        Assertions.assertEquals(firstRoom, roomResponse);
+        Assertions.assertEquals(roomEmpty, roomResponse);
     }
 
     @Test
     public void deleteRoom_ValidRoom_SuccessDeleteTest(){
-        repository.deleteRoom(firstRoom.getRoomNumber());
+        repository.deleteRoom(roomEmpty.getRoomNumber());
 
         List<Room> roomsListResponse = repository.readAllRooms();
 
-        Assertions.assertFalse(roomsListResponse.contains(firstRoom));
+        Assertions.assertFalse(roomsListResponse.contains(roomEmpty));
     }
 
     @Test
@@ -98,7 +107,7 @@ public class RepositoryIntegrationTest {
         List<Room> roomsListResponse = repository.readAllRooms();
 
         Assertions.assertFalse(
-                roomsListResponse.contains(firstRoom) ||
-                        roomsListResponse.contains(secondRoom));
+                roomsListResponse.contains(roomEmpty) ||
+                        roomsListResponse.contains(roomOccupied));
     }
 }

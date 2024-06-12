@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import static br.com.ada.reservala.factory.InstanceFactory.*;
 
 public class RepositoryUnitTest {
@@ -48,6 +50,12 @@ public class RepositoryUnitTest {
         List<Room> roomsResponse = repository.readOccupiedRooms();
 
         Assertions.assertEquals(roomsExpected, roomsResponse);
+    }
+
+    @Test
+    public void readOneRoom_EmptyDatabase_SuccessfulReadTeat(){
+        Optional<Room> roomResponse = repository.readOneRoom(10);
+        Assertions.assertTrue(roomResponse.isEmpty());
     }
 
     @Test
